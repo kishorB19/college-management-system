@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: college-management-system
+    runtime: node
+    buildCommand: |
+      cd server && npm install &&
+      cd ../client && npm install && VITE_API_URL=/api npm run build &&
+      cp -r dist/* ../server/public/
+    startCommand: cd server && node index.js
+    envVars:
+      - key: NODE_ENV
+        value: production

@@ -1,16 +1,15 @@
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
 const { initDB } = require('./db/init');
 
 const app = express();
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;
 
 app.use(cors());
 app.use(express.json());
 
-app.get('/', (req, res) => {
-  res.redirect('http://localhost:5173');
-});
+app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', message: 'CMS Server is running' });
@@ -30,7 +29,7 @@ initDB().then(() => {
   });
 
   app.get('*', (req, res) => {
-    res.redirect(`http://localhost:5173${req.originalUrl}`);
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
   });
 
   app.use((err, req, res, next) => {
@@ -39,7 +38,7 @@ initDB().then(() => {
   });
 
   app.listen(PORT, () => {
-    console.log(`CMS Server running on http://localhost:${PORT}`);
+    console.log(`CMS Server running on port ${PORT}`);
   });
 }).catch((err) => {
   console.error('Failed to initialize database:', err);
